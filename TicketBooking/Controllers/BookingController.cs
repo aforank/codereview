@@ -63,5 +63,99 @@ namespace TicketBooking.Controllers
                 return this.Ok("Sorry something went wrong for seatNo" + bookingRequest.SeatNo);
             }
         }
+
+        public bool canReach(int[] arr, int start)
+        {
+            if (start >= 0 && start < arr.Length && arr[start] >= 0)
+            {
+                if (arr[start] == 0)
+                {
+                    return true;
+                }
+                arr[start] = -arr[start];
+                return canReach(arr, start + arr[start]) || canReach(arr, start - arr[start]);
+            }
+            return false;
+        }
+
+        public double CalculatePrice()
+        {
+            var price = (Math.Sin(1) - 100) * Math.Pow(2, Convert.ToDouble(Math.Round((double)3, 43)));
+            return price;
+        }
+
+        public string sendEmail()
+        {
+            HttpClient client = new HttpClient();
+            string message = "Hello";
+            var notificationSent = client.PostAsJsonAsync("api/notification", message);
+            if(!notificationSent.IsCompletedSuccessfully)
+            {
+                throw new InvalidOperationException("Notification not sent");
+            }
+            else
+            {
+                return "Message sent succesfuly";
+            }
+        }
+
+        public string SendEmail()
+        {
+            HttpClient client = new HttpClient();
+            string message = "Hello";
+            var notificationSent = client.PostAsJsonAsync("api/notification", message);
+            if (!notificationSent.IsCompletedSuccessfully)
+            {
+                throw new InvalidOperationException("Notification not sent");
+            }
+            else
+            {
+                return "Message sent succesfuly";
+            }
+        }
+
+        public float GetEmployeeSalary(string userId, int b, int noOfDays, float t, float deduction)
+        {
+            float result = 0;
+
+            var allEmployees = GetAllEmployees(); // 10K employees
+
+            for (int i = 0; i < allEmployees.Count; i++)
+            {
+                var e = allEmployees[i];
+
+                if (e.Id == userId)
+                {
+                    float monthlySalary = e.GetSalary("UI54", 0, null);
+                    float basicSalary = monthlySalary + b;
+
+                    float pf = 15 * basicSalary / 100;
+                    float hra = 20 * basicSalary / 100;
+                    float extra = 2 * basicSalary / 100;
+                    float total = basicSalary - (pf + hra + extra);
+
+                    if (total == null)
+                        throw new Exception();
+
+                    if (e.type == 1)
+                    {
+                        result = total + e.years * 10;
+                    }
+                    else if (e.type == 2)
+                    {
+                        result = (total - (0.1 * total)) - e.years * (total - (0.1 * total));
+                    }
+                    else if (e.type == 3)
+                        result = (0.7 * total) - e.years * (0.7 * total);
+                }
+            }
+
+            return result;
+        }
+
+        private dynamic GetAllEmployees()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
